@@ -1,4 +1,155 @@
-function draw() {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>floppy ai</title>
+  <style>
+    :root {
+      --bg-top: #4b6cb7;
+      --bg-bottom: #182848;
+      --pipe: #2ecc71;
+      --pipe-shadow: rgba(0,0,0,0.1);
+      --bird: #ffd700;
+      --text: #ffffff;
+      --overlay-bg: rgba(0,0,0,0.6);
+    }
+    * { box-sizing:border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+      background: linear-gradient(135deg, var(--bg-top), var(--bg-bottom));
+      color: var(--text);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      min-height:100vh;
+      padding: 12px;
+      user-select:none;
+    }
+    h1 {
+      margin: 4px 0;
+      font-size:1.6rem;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      font-weight:600;
+    }
+    #info {
+      margin:4px 0 0;
+      font-size:.85rem;
+      opacity:.9;
+    }
+    #wrapper {
+      position:relative;
+    }
+    canvas {
+      display:block;
+      border-radius:12px;
+      background: #0f1f3e;
+      width:100%;
+      max-width:400px;
+      height:auto;
+      box-shadow:0 30px 80px -10px rgba(0,0,0,0.5);
+    }
+    .overlay {
+      position:absolute;
+      top:0; left:0; right:0; bottom:0;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      background: var(--overlay-bg);
+      border-radius:12px;
+      gap:8px;
+      backdrop-filter: blur(4px);
+    }
+    .btn {
+      padding:8px 16px;
+      background:#ffffff10;
+      border:1px solid rgba(255,255,255,0.3);
+      border-radius:999px;
+      cursor:pointer;
+      font-size:.9rem;
+      color:var(--text);
+      transition:filter .2s;
+    }
+    .btn:hover { filter:brightness(1.1); }
+    .score {
+      position:absolute;
+      top:12px;
+      left:50%;
+      transform:translateX(-50%);
+      font-size:2rem;
+      font-weight:700;
+      text-shadow:0 4px 15px rgba(255,255,255,0.4);
+      letter-spacing:1px;
+    }
+    .small {
+      font-size:.65rem;
+      opacity:.8;
+    }
+  </style>
+</head>
+<body>
+  <h1>floppy ai</h1>
+  <div id="wrapper">
+    <div class="score" id="score">0</div>
+    <canvas id="game" width="360" height="640"></canvas>
+    <div id="overlay" class="overlay">
+      <div id="message">click / tap to start</div>
+      <div class="small">dodge the traps. loyalty increases with survival.</div>
+      <button class="btn" id="startBtn">play</button>
+    </div>
+  </div>
+  <p id="info">built for sentient — zero cost, open source.</p>
+
+  <script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const overlay = document.getElementById('overlay');
+    const messageEl = document.getElementById('message');
+    const startBtn = document.getElementById('startBtn');
+    const scoreEl = document.getElementById('score');
+
+    // responsive scaling for high-DPI
+    function resize() {
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = 360 * ratio;
+      canvas.height = 640 * ratio;
+      canvas.style.width = '360px';
+      canvas.style.height = '640px';
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // state
+    let y, velocity, pipes, frame, score, gameOver;
+    const gravity = 0.55;
+    const flapStrength = -10;
+    const pipeWidth = 60;
+    const gap = 160;
+    let particles = [];
+
+    function reset() {
+      y = canvas.height / (window.devicePixelRatio || 1) / 2;
+      velocity = 0;
+      pipes = [];
+      frame = 0;
+      score = 0;
+      gameOver = false;
+      messageEl.textContent = 'click / tap to flap';
+      overlay.style.display = 'flex';
+      scoreEl.textContent = '0';
+    }
+
+    function addPipe() {
+      const maxTop = (canvas.height / (window.devicePixelRatio || 1)) - gap - 100;
+      const topHeight = Math.random() * maxTop + 50;
+      pipes.push({ x: canvas.width / (window.devicePixelRatio || 1), top: topHeight });
+    }
+
+    function draw() {
       // background (slightly darker)
       ctx.fillStyle = '#0f1f3e';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -59,7 +210,7 @@ function draw() {
       scoreEl.textContent = score;
 
       // collision detection
-      if (y + 14 > canvas.height / (window.devicePixelRatio  1)  y - 14 < 0) gameOver = true;
+      if (y + 14 > canvas.height / (window.devicePixelRatio || 1) || y - 14 < 0) gameOver = true;
       pipes.forEach(p => {
         if (80 + 14 > p.x && 80 - 14 < p.x + pipeWidth) {
           if (y - 14 < p.top || y + 14 > p.top + gap) {
