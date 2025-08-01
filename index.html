@@ -130,173 +130,169 @@
   <p id="info">built for sentient — zero cost, open source.</p>
 
   <script>
-    const canvas = document.getElementById('game');
-    const ctx = canvas.getContext('2d');
-    const overlay = document.getElementById('overlay');
-    const messageEl = document.getElementById('message');
-    const startBtn = document.getElementById('startBtn');
-    const scoreEl = document.getElementById('score');
+   <script>
+window.addEventListener('DOMContentLoaded', () => {
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+  const overlay = document.getElementById('overlay');
+  const messageEl = document.getElementById('message');
+  const startBtn = document.getElementById('startBtn');
+  const scoreEl = document.getElementById('score');
 
-    // responsive scaling for high-DPI
-    function resize() {
-      const ratio = window.devicePixelRatio || 1;
-      canvas.width = 360 * ratio;
-      canvas.height = 640 * ratio;
-      canvas.style.width = '360px';
-      canvas.style.height = '640px';
-      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-    }
-    resize();
-    window.addEventListener('resize', resize);
+  function resize() {
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = 360 * ratio;
+    canvas.height = 640 * ratio;
+    canvas.style.width = '360px';
+    canvas.style.height = '640px';
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
 
-    // state
-    let y, velocity, pipes, frame, score, gameOver;
-    const gravity = 0.55;
-    const flapStrength = -10;
-    const pipeWidth = 60;
-    const gap = 160;
-    let particles = [];
+  let y, velocity, pipes, frame, score, gameOver;
+  const gravity = 0.55;
+  const flapStrength = -10;
+  const pipeWidth = 60;
+  const gap = 160;
+  let particles = [];
 
-    function reset() {
-      y = canvas.height / (window.devicePixelRatio || 1) / 2;
-      velocity = 0;
-      pipes = [];
-      frame = 0;
-      score = 0;
-      gameOver = false;
-      messageEl.textContent = 'click / tap to flap';
-      overlay.style.display = 'flex';
-      scoreEl.textContent = '0';
-    }
+  function reset() {
+    y = (canvas.height / (window.devicePixelRatio || 1)) / 2;
+    velocity = 0;
+    pipes = [];
+    frame = 0;
+    score = 0;
+    gameOver = false;
+    messageEl.textContent = 'click / tap to flap';
+    overlay.style.display = 'flex';
+    scoreEl.textContent = '0';
+  }
 
-    function addPipe() {
-      const maxTop = (canvas.height / (window.devicePixelRatio || 1)) - gap - 100;
-      const topHeight = Math.random() * maxTop + 50;
-      pipes.push({ x: canvas.width / (window.devicePixelRatio || 1), top: topHeight });
-    }
+  function addPipe() {
+    const maxTop = (canvas.height / (window.devicePixelRatio || 1)) - gap - 100;
+    const topHeight = Math.random() * maxTop + 50;
+    pipes.push({ x: canvas.width / (window.devicePixelRatio || 1), top: topHeight });
+  }
 
-    function draw() {
-      // background (slightly darker)
-      ctx.fillStyle = '#0f1f3e';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+  function draw() {
+    ctx.fillStyle = '#0f1f3e';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // update & draw particles
-      particles = particles.filter(p => p.life > 0);
-      particles.forEach(p => {
-        ctx.fillStyle = rgba(255,223,0,${p.life / 30});
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-        ctx.fill();
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.2;
-        p.life--;
-      });
-
-      // pipes
-      pipes.forEach(p => {
-        // shadow
-        ctx.save();
-        ctx.fillStyle = '#2ecc71';
-        ctx.shadowColor = 'rgba(0,0,0,0.2)';
-        ctx.shadowBlur = 15;
-        // top pipe with rounded bottom
-        ctx.beginPath();
-        ctx.moveTo(p.x, 0);
-        ctx.lineTo(p.x + pipeWidth, 0);
-        ctx.lineTo(p.x + pipeWidth, p.top);
-        ctx.arc(p.x + pipeWidth/2, p.top, pipeWidth/2, 0, Math.PI, true);
-        ctx.lineTo(p.x, 0);
-        ctx.fill();
-
-        // bottom pipe with rounded top
-        const bottomY = p.top + gap;
-        ctx.beginPath();
-        ctx.moveTo(p.x, bottomY);
-        ctx.lineTo(p.x + pipeWidth, bottomY);
-        ctx.arc(p.x + pipeWidth/2, bottomY, pipeWidth/2, Math.PI, 0, true);
-        ctx.lineTo(p.x, bottomY);
-        ctx.lineTo(p.x, canvas.height / (window.devicePixelRatio || 1));
-        ctx.lineTo(p.x, bottomY);
-        ctx.fill();
-        ctx.restore();
-      });
-
-      // bird
-      ctx.save();
-      ctx.shadowColor = '#ffd700';
-      ctx.shadowBlur = 20;
-      ctx.fillStyle = '#ffd700';
+    particles = particles.filter(p => p.life > 0);
+    particles.forEach(p => {
+      ctx.fillStyle = rgba(255,223,0,${p.life / 30});
       ctx.beginPath();
-      ctx.arc(80, y, 14, 0, Math.PI * 2);
+      ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+      ctx.fill();
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.2;
+      p.life--;
+    });
+
+    pipes.forEach(p => {
+      ctx.save();
+      ctx.fillStyle = '#2ecc71';
+      ctx.shadowColor = 'rgba(0,0,0,0.2)';
+      ctx.shadowBlur = 15;
+
+      // top pipe
+      ctx.beginPath();
+      ctx.moveTo(p.x, 0);
+      ctx.lineTo(p.x + pipeWidth, 0);
+      ctx.lineTo(p.x + pipeWidth, p.top);
+      ctx.arc(p.x + pipeWidth / 2, p.top, pipeWidth / 2, 0, Math.PI, true);
+      ctx.lineTo(p.x, 0);
+      ctx.fill();
+
+      // bottom pipe
+      const bottomY = p.top + gap;
+      ctx.beginPath();
+      ctx.moveTo(p.x, bottomY);
+      ctx.lineTo(p.x + pipeWidth, bottomY);
+      ctx.arc(p.x + pipeWidth / 2, bottomY, pipeWidth / 2, Math.PI, 0, true);
+      ctx.lineTo(p.x, bottomY);
+      ctx.lineTo(p.x, canvas.height / (window.devicePixelRatio || 1));
+      ctx.lineTo(p.x, bottomY);
       ctx.fill();
       ctx.restore();
+    });
 
-      // score
-      scoreEl.textContent = score;
+    // bird
+    ctx.save();
+    ctx.shadowColor = '#ffd700';
+    ctx.shadowBlur = 20;
+    ctx.fillStyle = '#ffd700';
+    ctx.beginPath();
+    ctx.arc(80, y, 14, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
 
-      // collision detection
-      if (y + 14 > canvas.height / (window.devicePixelRatio || 1) || y - 14 < 0) gameOver = true;
-      pipes.forEach(p => {
-        if (80 + 14 > p.x && 80 - 14 < p.x + pipeWidth) {
-          if (y - 14 < p.top || y + 14 > p.top + gap) {
-            gameOver = true;
-          }
+    // score
+    scoreEl.textContent = score;
+
+    // collisions
+    if (y + 14 > canvas.height / (window.devicePixelRatio || 1) || y - 14 < 0) gameOver = true;
+    pipes.forEach(p => {
+      if (80 + 14 > p.x && 80 - 14 < p.x + pipeWidth) {
+        if (y - 14 < p.top || y + 14 > p.top + gap) {
+          gameOver = true;
         }
+      }
+    });
+
+    if (gameOver) {
+      overlay.style.display = 'flex';
+      messageEl.textContent = 'game over • click to retry';
+    }
+  }
+
+  function update() {
+    if (gameOver) return;
+    frame++;
+    if (frame % 90 === 0) addPipe();
+    pipes.forEach(p => { p.x -= 2.5; });
+    if (pipes.length && pipes[0].x + pipeWidth < 0) {
+      pipes.shift();
+      score++;
+    }
+    velocity += gravity;
+    y += velocity;
+  }
+
+  function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  function flap() {
+    if (gameOver) {
+      reset();
+      return;
+    }
+    velocity = flapStrength;
+    for (let i = 0; i < 8; i++) {
+      particles.push({
+        x: 80,
+        y: y,
+        vx: (Math.random() - 0.5) * 2,
+        vy: (Math.random() - 0.5) * 2 - 1,
+        life: 30
       });
-
-      if (gameOver) {
-        overlay.style.display = 'flex';
-        messageEl.textContent = 'game over • click to retry';
-      }
     }
+    overlay.style.display = 'none';
+  }
 
-    function update() {
-      if (gameOver) return;
-      frame++;
-      if (frame % 90 === 0) addPipe();
-      // move pipes
-      pipes.forEach(p => { p.x -= 2.5; });
-      // remove offscreen
-      if (pipes.length && pipes[0].x + pipeWidth < 0) {
-        pipes.shift();
-        score++;
-      }
-      velocity += gravity;
-      y += velocity;
-    }
+  canvas.addEventListener('click', flap);
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); flap(); }, { passive: false });
+  startBtn.addEventListener('click', flap);
 
-    function loop() {
-      update();
-      draw();
-      requestAnimationFrame(loop);
-    }
-
-    function flap() {
-      if (gameOver) {
-        reset();
-        return;
-      }
-      velocity = flapStrength;
-      // particle burst
-      for (let i = 0; i < 8; i++) {
-        particles.push({
-          x: 80,
-          y: y,
-          vx: (Math.random() - 0.5) * 2,
-          vy: (Math.random() - 0.5) * 2 - 1,
-          life: 30
-        });
-      }
-      overlay.style.display = 'none';
-    }
-
-    canvas.addEventListener('click', flap);
-    canvas.addEventListener('touchstart', e => { e.preventDefault(); flap(); }, { passive:false });
-    startBtn.addEventListener('click', flap);
-
-    reset();
-    loop();
+  reset();
+  loop();
+});
+</script>
   </script>
 <div style="margin-top:14px; font-size:0.55rem; display:flex; flex-direction:column; align-items:center; gap:4px; opacity:.9;">
   <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:999px;">
