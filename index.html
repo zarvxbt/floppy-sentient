@@ -1,27 +1,3 @@
-<div style="width:100%; max-width:420px; display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:6px;">
-  <!-- Sentient-style logo (custom SVG, safe to use) -->
-  <div style="display:flex; align-items:center; gap:6px;">
-    <svg width="32" height="32" viewBox="0 0 64 64" aria-label="sentient" style="display:block;">
-      <circle cx="32" cy="32" r="30" fill="url(#grad)" />
-      <defs>
-        <radialGradient id="grad" cx="50%" cy="50%" r="60%">
-          <stop offset="0%" stop-color="#4b6cb7" />
-          <stop offset="100%" stop-color="#182848" />
-        </radialGradient>
-      </defs>
-    </svg>
-    <div style="font-weight:700; font-size:1rem; letter-spacing:0.5px;">
-      <div style="line-height:1;">sentient</div>
-      <div style="line-height:1; font-size:0.55rem; opacity:.8;">open agi</div>
-    </div>
-  </div>
-
-  <!-- Contributor credit -->
-  <div style="font-size:.6rem; text-align:right; line-height:1.1;">
-    built by <strong>zarv</strong><br/>
-    for <span style="opacity:.9;">sentient</span>
-  </div>
-</div>
 
 
 <!DOCTYPE html>
@@ -117,7 +93,31 @@
   </style>
 </head>
 <body>
-  <h1>floppy ai</h1>
+  <h1><div style="width:100%; max-width:420px; display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:6px;">
+  <!-- Sentient-style logo (custom SVG, safe to use) -->
+  <div style="display:flex; align-items:center; gap:6px;">
+    <svg width="32" height="32" viewBox="0 0 64 64" aria-label="sentient" style="display:block;">
+      <circle cx="32" cy="32" r="30" fill="url(#grad)" />
+      <defs>
+        <radialGradient id="grad" cx="50%" cy="50%" r="60%">
+          <stop offset="0%" stop-color="#4b6cb7" />
+          <stop offset="100%" stop-color="#182848" />
+        </radialGradient>
+      </defs>
+    </svg>
+    <div style="font-weight:700; font-size:1rem; letter-spacing:0.5px;">
+      <div style="line-height:1;">sentient</div>
+      <div style="line-height:1; font-size:0.55rem; opacity:.8;">open agi</div>
+    </div>
+  </div>
+
+  <!-- Contributor credit -->
+  <div style="font-size:.6rem; text-align:right; line-height:1.1;">
+    built by <strong>zarv</strong><br/>
+    for <span style="opacity:.9;">sentient</span>
+  </div>
+</div>
+</h1>
   <div id="wrapper">
     <div class="score" id="score">0</div>
     <canvas id="game" width="360" height="640"></canvas>
